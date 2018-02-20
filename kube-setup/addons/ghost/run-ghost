@@ -1,0 +1,7 @@
+#!/bin/bash
+
+APP_HOST=$(kubectl get svc --namespace default ghost-ghost --template "{{ range (index .status.loadBalancer.ingress 0) }}{{ . }}{{ end }}")
+helm upgrade ghost --set serviceType=LoadBalancer,ghostHost=$APP_HOST stable/ghost
+
+echo Email:    user@example.com
+echo Password: $(kubectl get secret --namespace default ghost-ghost -o jsonpath="{.data.ghost-password}" | base64 --decode)

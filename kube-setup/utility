@@ -1,0 +1,44 @@
+#!/bin/bash
+
+function displayPresence() {
+  local var=$1
+  local presence=''
+  local value=$(eval "echo \$${var}")
+
+  if [ -e $value ]; then presence='missing'; else presence='present'; fi
+
+  echo "$var $presence"
+}
+
+function askYesNoQuestion() {
+  read -r -d '' question <<-EOF
+  ${1}
+
+  Confirm? (Y|N)
+EOF
+
+  while true; do
+    read -p "$question" answer
+    case $answer in
+        [Yy]* )
+          return 1
+          ;;
+        [Nn]* )
+          return 0
+          ;;
+        * )
+          echo "Please answer yes or no.";;
+    esac
+  done
+}
+
+function isClusterUp() {
+  local nodesReady=$(kubectl get nodes | grep -o Ready | wc -l | tr -d '[:space:]')
+
+  # total nodes is the node count plus one master node
+  # convert NODE_COUNT to an integer
+  local nodesToCreate=$((10#$NODE_COUNT+1))
+
+  if [ $nodesToCreate == $nodesReady ]; then return 1; fi
+  return 0
+}

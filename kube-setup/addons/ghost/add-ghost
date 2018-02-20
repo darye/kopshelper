@@ -1,0 +1,4 @@
+#!/bin/bash
+
+helm install stable/ghost --name ghost
+kubectl get svc --namespace default -w ghost-ghost

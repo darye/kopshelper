@@ -1,0 +1,107 @@
+#!/bin/bash
+# Be sure to install kops
+# https://github.com/kubernetes/kops#linux
+# and the awscli
+# https://github.com/kubernetes/kops/blob/master/docs/install.md
+#
+# requires
+# - AWS_ACCESS_KEY_ID
+# - AWS_SECRET_ACCESS_KEY
+# - AWS_DEFAULT_REGION
+# - DOMAIN
+# - NODE_COUNT
+thisDirectory="${BASH_SOURCE%/*}"
+
+source $thisDirectory/kops-user
+source $thisDirectory/utility
+
+if [ -e $AWS_ACCESS_KEY_ID ] ||
+   [ -e $AWS_SECRET_ACCESS_KEY ] ||
+   [ -e $AWS_DEFAULT_REGION ] ||
+   [ -e $DOMAIN ] ||
+   [ -e $NODE_COUNT ] ||
+   [ -e $NODE_SIZE ] ||
+   [ -e $MASTER_SIZE ] ||
+   [ -e $SSH_PUBLIC_KEY_FILE ] ||
+   [ -e $ROOT_DOMAIN ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence AWS_ACCESS_KEY_ID)
+  $(displayPresence AWS_SECRET_ACCESS_KEY)
+  $(displayPresence AWS_DEFAULT_REGION)
+  $(displayPresence DOMAIN)
+  $(displayPresence NODE_COUNT)
+  $(displayPresence NODE_SIZE)
+  $(displayPresence MASTER_SIZE)
+  $(displayPresence SSH_PUBLIC_KEY_FILE)
+  $(displayPresence ROOT_DOMAIN)
+EOF
+  exit 1
+fi
+
+export REGION=$AWS_DEFAULT_REGION
+# chop off the TLD
+export SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
+export KUBE_HOSTED_ZONE="$DOMAIN"
+export KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
+export S3_BUCKET_NAME="kube-$SITE_NAME"
+export KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+
+# add Route 53 entries
+askYesNoQuestion "Do you want to add an entry into Route53 for ${KUBE_HOSTED_ZONE}?"
+if [ $? -eq 1 ]; then
+  echo "Adding DNS"
+  $thisDirectory/add-dns
+fi
+
+# create cluster
+askYesNoQuestion "Do you want to create the cluster for ${KUBE_HOSTED_ZONE}?"
+if [ $? -eq 1 ]; then
+  echo "Creating Cluster"
+  $thisDirectory/manage-cluster/create
+fi
+
+helm repo update
+helm init
+
+# add dashboard
+askYesNoQuestion "Do you want to add the Dashboard?"
+if [ $? -eq 1 ]; then
+  echo "Adding Dashboard"
+  helm install stable/kubernetes-dashboard --name "dashboard"
+  echo "Done :-)"
+fi
+
+# add heapster
+askYesNoQuestion "Do you want to add Heapster?"
+if [ $? -eq 1 ]; then
+  echo "Adding Heapster"
+  $thisDirectory/addons/add-heapster-grafana
+  echo "Done :-)"
+fi
+
+# add cluster autoscaler
+askYesNoQuestion "Do you want to add a Cluster Auto-Scaler?"
+if [ $? -eq 1 ]; then
+  echo "Adding a Cluster Auto-Scaler"
+  $thisDirectory/addons/add-autoscaler
+fi
+
+# add nginx
+askYesNoQuestion "Do you want to add NGINX?"
+if [ $? -eq 1 ]; then
+  echo "Adding NGINX"
+  helm install stable/nginx-ingress --name "nginx"
+fi
+
+if [ "$USE_BASTION" == "true" ]; then
+  # add bastion access
+  askYesNoQuestion "Do you want to add bastion access to your current IP?"
+  if [ $? -eq 1 ]; then
+    echo "Adding bastion access"
+    $thisDirectory/addons/add-bastion-access
+  fi
+fi
+
+echo "Thanks, you're done"
+exit 0

@@ -1,0 +1,4 @@
+setup-vars
+*.tgz
+output/*
+example-commands

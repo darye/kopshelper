@@ -1,0 +1,27 @@
+{
+  "Comment": "Create a subdomain NS record in the parent domain",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "kube.indyaws.darye.com",
+        "Type": "NS",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "ns-1470.awsdns-55.org"
+          },
+          {
+            "Value": "ns-1939.awsdns-50.co.uk"
+          },
+          {
+            "Value": "ns-577.awsdns-08.net"
+          },
+          {
+            "Value": "ns-477.awsdns-59.com"
+          }
+        ]
+      }
+    }
+  ]
+}

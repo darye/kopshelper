@@ -1,0 +1,27 @@
+{
+  "Comment": "Create a subdomain NS record in the parent domain",
+  "Changes": [
+    {
+      "Action": "CREATE",
+      "ResourceRecordSet": {
+        "Name": "${DOMAIN}",
+        "Type": "NS",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Value": "${NS_RECORD_1}"
+          },
+          {
+            "Value": "${NS_RECORD_2}"
+          },
+          {
+            "Value": "${NS_RECORD_3}"
+          },
+          {
+            "Value": "${NS_RECORD_4}"
+          }
+        ]
+      }
+    }
+  ]
+}

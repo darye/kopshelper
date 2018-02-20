@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# requires
+# - REGION
+# - S3_BUCKET_NAME
+# - KUBE_CLUSTER_NAME
+# - KOPS_STATE_STORE
+# - NODE_COUNT
+# - NODE_SIZE
+# - MASTER_SIZE
+# - SSH_PUBLIC_KEY_FILE
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../utility
+
+if [ -e $REGION ] ||
+   [ -e $S3_BUCKET_NAME ] ||
+   [ -e $KUBE_CLUSTER_NAME ] ||
+   [ -e $KOPS_STATE_STORE ] ||
+   [ -e $NODE_COUNT ] ||
+   [ -e $NODE_SIZE ] ||
+   [ -e $NODE_VOLUME_SIZE ] ||
+   [ -e $MASTER_SIZE ] ||
+   [ -e $SSH_PUBLIC_KEY_FILE ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence REGION)
+  $(displayPresence S3_BUCKET_NAME)
+  $(displayPresence KUBE_CLUSTER_NAME)
+  $(displayPresence KOPS_STATE_STORE)
+  $(displayPresence NODE_COUNT)
+  $(displayPresence NODE_SIZE)
+  $(displayPresence NODE_VOLUME_SIZE)
+  $(displayPresence MASTER_SIZE)
+  $(displayPresence SSH_PUBLIC_KEY_FILE)
+  $(displayPresence USE_BASTION)
+EOF
+  exit 1
+fi
+
+createBucketConfiguration=''
+if [[ ! $REGION == 'us-east-1' ]]; then
+  createBucketConfiguration="--create-bucket-configuration LocationConstraint=${REGION}"
+fi
+
+aws s3api create-bucket --bucket $S3_BUCKET_NAME --region $REGION $createBucketConfiguration
+aws s3api put-bucket-versioning --bucket $S3_BUCKET_NAME  --versioning-configuration Status=Enabled
+
+zones=$(aws ec2 describe-availability-zones --region ${REGION})
+masterZone=$(echo "${zones}" | jq .AvailabilityZones[0].ZoneName | sed s/\"//g)
+allZones=$(echo "${zones}" | jq .AvailabilityZones[].ZoneName | sed s/\"//g | tr '\n' ',' | sed 's/.$//')
+
+createCommand="kops create cluster \
+    --master-zones \"${masterZone}\"
+    --zones \"${allZones}\" \
+    --name $KUBE_CLUSTER_NAME \
+    --state $KOPS_STATE_STORE \
+    --node-count $NODE_COUNT \
+    --node-size \"${NODE_SIZE}\" \
+    --node-volume-size $NODE_VOLUME_SIZE
+    --topology private \
+    --master-size \"${MASTER_SIZE}\" \
+    --networking weave \
+    --ssh-public-key $SSH_PUBLIC_KEY_FILE \
+    --bastion=\"${USE_BASTION}\" "
+
+confirmClusterCommand="kops update cluster ${KUBE_CLUSTER_NAME} --yes"
+
+# create cluster for real
+eval $createCommand
+echo -e "\n\n"
+
+read -r -d '' questionText <<-EOF
+!!! WARNING !!!
+  You are about to do a whole bunch of crap to AWS.
+  Please make sure you want to apply all the above changes.
+
+  In order to apply the changes, if you say 'Y' we will run the following command:
+
+  $confirmClusterCommand
+
+EOF
+
+read -r -d '' deleteMessage <<-EOF
+  Please run the following command to delete the cluster:
+
+  kops delete cluster --name $KUBE_CLUSTER_NAME --state $KOPS_STATE_STORE
+EOF
+
+askYesNoQuestion "${questionText}"
+if [ $? -eq 1 ]; then
+  echo "Really creating the cluster now..."
+  eval $confirmClusterCommand
+  $thisDirectory/validate
+else
+  echo -e $deleteMessage;
+fi

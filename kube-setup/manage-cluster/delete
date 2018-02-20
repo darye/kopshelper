@@ -1,0 +1,37 @@
+
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../kops-user
+source $thisDirectory/../utility
+
+if [ -e $AWS_ACCESS_KEY_ID ] ||
+   [ -e $AWS_SECRET_ACCESS_KEY ] ||
+   [ -e $DOMAIN ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence AWS_ACCESS_KEY_ID)
+  $(displayPresence AWS_SECRET_ACCESS_KEY)
+  $(displayPresence DOMAIN)
+EOF
+  exit 1
+fi
+
+# chop off the TLD
+export SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
+export KUBE_HOSTED_ZONE="$DOMAIN"
+export KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
+export S3_BUCKET_NAME="kube-$SITE_NAME"
+export KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+
+kops delete cluster --name $KUBE_CLUSTER_NAME --state=$KOPS_STATE_STORE
+
+echo ""
+
+askYesNoQuestion "Are you sure you want to delete the cluster? This is not reversible."
+if [ $? -eq 1 ]; then
+  echo "Really deleting the cluster now..."
+  kops delete cluster --name $KUBE_CLUSTER_NAME --state=$KOPS_STATE_STORE --yes
+else
+  echo -e "Canceled";
+fi

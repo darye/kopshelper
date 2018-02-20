@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# requires
+# - KUBE_HOSTED_ZONE
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../utility
+
+if [ -e $KUBE_HOSTED_ZONE ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence KUBE_HOSTED_ZONE)
+EOF
+  exit 1
+fi
+
+isClusterUp
+if [ $? -eq 0 ]; then echo "Cluster isn't up yet, nothing to finalize"; exit 0; fi
+
+# add permissions to allow the person to login from their current IP into bastion
+ip=$(curl -s http://whatismyip.akamai.com/)
+
+groupId=$(aws ec2 describe-security-groups --filters Name=group-name,Values=bastion.kube-cluster.${KUBE_HOSTED_ZONE} | jq .SecurityGroups[0].GroupId | sed s/\"//g)
+
+echo "Adding an exception for your IP (${ip}) into the bastion security group: ${groupId}"
+
+aws ec2 authorize-security-group-ingress --group-id "${groupId}" --protocol tcp --port 22 --cidr $ip/32 --output text
+
+bastionIp=$(aws ec2 describe-instances --filter Name=network-interface.group-name,Values=bastion.kube-cluster.${KUBE_HOSTED_ZONE} | jq .Reservations[0].Instances[0].PublicIpAddress | sed s/\"//g)
+privateKeyFileName=$(echo $SSH_PUBLIC_KEY_FILE | sed -e 's/\.pub//g')
+
+echo -e "You can now SSH into your bastion node by using this command: \nssh -A -i ${privateKeyFileName} admin@${bastionIp}"

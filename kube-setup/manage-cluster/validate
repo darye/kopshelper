@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# requires
+# - NODE_COUNT
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../utility
+
+if [ -e $NODE_COUNT ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence NODE_COUNT)
+EOF
+  exit 1
+fi
+
+# Validate cluster is up before we go forward.
+# total nodes is the node count plus one master node
+# convert NODE_COUNT to an integer
+# totalNodes=$((10#$NODE_COUNT+1))
+
+echo "Checking if cluster is up"
+
+isClusterUp
+while [ $? -eq 0 ]; do
+    printf "."
+    sleep 10
+    isClusterUp
+done
+
+echo -e "\nCluster is up!"

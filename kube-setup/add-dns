@@ -1,0 +1,49 @@
+#!/bin/bash
+# requires
+# - KUBE_HOSTED_ZONE
+# - ROOT_DOMAIN
+# - DOMAIN
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/utility
+
+if [ -e $KUBE_HOSTED_ZONE ] ||
+   [ -e $ROOT_DOMAIN ] ||
+   [ -e $DOMAIN ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence KUBE_HOSTED_ZONE)
+  $(displayPresence ROOT_DOMAIN)
+  $(displayPresence DOMAIN)
+EOF
+  exit 1
+fi
+
+echo "Adding Route 53 entries"
+
+dnsInfo=$(ID=$(uuidgen) && aws route53 create-hosted-zone --name $KUBE_HOSTED_ZONE --caller-reference $ID | jq .DelegationSet.NameServers)
+
+export NS_RECORD_1=$(echo "${dnsInfo}" | jq .[0] | sed s/\"//g)
+export NS_RECORD_2=$(echo "${dnsInfo}" | jq .[1] | sed s/\"//g)
+export NS_RECORD_3=$(echo "${dnsInfo}" | jq .[2] | sed s/\"//g)
+export NS_RECORD_4=$(echo "${dnsInfo}" | jq .[3] | sed s/\"//g)
+
+awsHostedZoneCmd="aws route53 list-hosted-zones | jq '.HostedZones[] | select(.Name==\"${ROOT_DOMAIN}.\") | .Id' | sed 's/\/hostedzone\///g' | sed 's/\\\"//g'"
+hostedZone=$(eval $awsHostedZoneCmd)
+
+mkdir -p $thisDirectory/output/
+envsubst \$NS_RECORD_1,\$NS_RECORD_2,\$NS_RECORD_3,\$NS_RECORD_4,\$DOMAIN < $thisDirectory/route53-ns.json.tmpl > $thisDirectory/output/route53-ns.json
+
+awsAddRouteCmd="aws route53 change-resource-record-sets --hosted-zone-id ${hostedZone} --change-batch file://${thisDirectory}/output/route53-ns.json"
+eval $awsAddRouteCmd
+
+echo "OK, added route53 mods..."
+echo "Checking DNS Resolution"
+echo "NOTE: you may need to edit your DNS records to ensure this is setup properly, especially if you're not using Route53 for your main domain"
+
+while [ -z $(dig "${DOMAIN}" | grep "${NS_RECORD_1}") ]; do
+    printf "."
+    sleep 5
+done
+
+echo -e "\nDNS Resolved!"

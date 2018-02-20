@@ -1,0 +1,21 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+
+source $thisDirectory/../kops-user
+source $thisDirectory/../utility
+
+SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
+KUBE_HOSTED_ZONE="$DOMAIN"
+KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
+S3_BUCKET_NAME="kube-$SITE_NAME"
+KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+
+kops update cluster --state=$KOPS_STATE_STORE --name=$KUBE_CLUSTER_NAME
+
+askYesNoQuestion "Are you sure you want to update your cluster?"
+if [ $? -eq 1 ]; then
+  echo "Updating Cluster"
+  kops update cluster --state=$KOPS_STATE_STORE --name=$KUBE_CLUSTER_NAME --yes
+fi
+

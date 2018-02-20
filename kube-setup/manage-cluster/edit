@@ -1,0 +1,11 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+
+source $thisDirectory/../kops-user
+
+SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
+S3_BUCKET_NAME="kube-$SITE_NAME"
+KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+
+kops edit cluster kube-cluster.kube.indyaws.darye.com --state=$KOPS_STATE_STORE

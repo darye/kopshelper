@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# requires
+# - REGION
+# - KUBE_CLUSTER_NAME
+# - AUTO_SCALER_MIN
+# - AUTO_SCALER_MAX
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../utility
+
+if [ -e $AUTO_SCALER_MIN ] ||
+  [ -e $AUTO_SCALER_MAX ] ||
+  [ -e $KUBE_CLUSTER_NAME ] ||
+  [ -e $REGION ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence AUTO_SCALER_MIN)
+  $(displayPresence AUTO_SCALER_MAX)
+  $(displayPresence REGION)
+  $(displayPresence KUBE_CLUSTER_NAME)
+EOF
+  exit 1
+fi
+
+envsubst \$KUBE_CLUSTER_NAME,\$AUTO_SCALER_MIN,\$AUTO_SCALER_MAX,\$REGION < $thisDirectory/cluster-autoscaler.yml.tmpl > ${thisDirectory}/../output/cluster-autoscaler.yml
+kubectl apply -f ${thisDirectory}/../output/cluster-autoscaler.yml;
