@@ -2,7 +2,7 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 
-source $thisDirectory/../kops-user
+source $thisDirectory/../setup-vars
 
 SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
 S3_BUCKET_NAME="kube-$SITE_NAME"

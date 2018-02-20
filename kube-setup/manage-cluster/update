@@ -2,7 +2,7 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 
-source $thisDirectory/../kops-user
+source $thisDirectory/../setup-vars
 source $thisDirectory/../utility
 
 SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')

@@ -12,7 +12,7 @@
 # - NODE_COUNT
 thisDirectory="${BASH_SOURCE%/*}"
 
-source $thisDirectory/kops-user
+source $thisDirectory/setup-vars
 source $thisDirectory/utility
 
 if [ -e $AWS_ACCESS_KEY_ID ] ||
