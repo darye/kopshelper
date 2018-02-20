@@ -33,6 +33,30 @@ export USE_BASTION="true" # true or false
 3. Run ./kube-setup/setup-cluster
 4. Run through the prompts to setup your cluster.
 
+## Resources
+
+Kubernetes
+1. Website: http://kubernetes.io/
+2. Cluster Auto Scaling: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/cloudprovider/aws
+3. Heapster: https://github.com/kubernetes/heapster
+4. Children’s Guide: https://deis.com/blog/2016/kubernetes-illustrated-guide/ (a little outdated)
+
+AWS CLI
+1. Download: https://aws.amazon.com/cli/  
+
+Kops
+1. GitHub: https://github.com/kubernetes/kops 
+2. Getting started: https://github.com/kubernetes/kops/blob/master/docs/aws.md
+3. Bastion: https://github.com/kubernetes/kops/blob/master/docs/bastion.md 
+
+Helm
+1. Website: https://helm.sh 
+2. Apps to install: https://hub.kubeapps.com
+3. GitHub: https://github.com/kubernetes/helm
+
+Grafana
+1. Website: https://grafana.com
+
 ## Contributors
 
 - Darye Henry
