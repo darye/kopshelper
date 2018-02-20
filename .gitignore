@@ -1,4 +1,4 @@
 setup-vars
 *.tgz
-output/*
+kube-setup/output/*
 example-commands
