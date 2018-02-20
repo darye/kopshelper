@@ -57,12 +57,15 @@ fi
 # create cluster
 askYesNoQuestion "Do you want to create the cluster for ${KUBE_HOSTED_ZONE}?"
 if [ $? -eq 1 ]; then
-  echo "Creating Cluster"
+  echo "Creating Cluster Spec"
   $thisDirectory/manage-cluster/create
 fi
 
+echo ""
+echo "Installing Tiller..."
 helm repo update
 helm init
+echo ""
 
 # add dashboard
 askYesNoQuestion "Do you want to add the Dashboard?"
@@ -73,7 +76,7 @@ if [ $? -eq 1 ]; then
 fi
 
 # add heapster
-askYesNoQuestion "Do you want to add Heapster?"
+askYesNoQuestion "Do you want to add Heapster and Grafana?"
 if [ $? -eq 1 ]; then
   echo "Adding Heapster"
   $thisDirectory/addons/add-heapster-grafana
