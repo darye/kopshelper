@@ -11,4 +11,3 @@ S3_BUCKET_NAME="kube-$SITE_NAME"
 KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
 
 kops edit ig nodes --state=$KOPS_STATE_STORE --name=$KUBE_CLUSTER_NAME
-

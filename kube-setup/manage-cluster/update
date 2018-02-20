@@ -18,4 +18,3 @@ if [ $? -eq 1 ]; then
   echo "Updating Cluster"
   kops update cluster --state=$KOPS_STATE_STORE --name=$KUBE_CLUSTER_NAME --yes
 fi
-

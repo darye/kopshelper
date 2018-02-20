@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 thisDirectory="${BASH_SOURCE%/*}"
