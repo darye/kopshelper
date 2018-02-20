@@ -39,7 +39,7 @@ Kubernetes
 1. Website: http://kubernetes.io/
 2. Cluster Auto Scaling: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/cloudprovider/aws
 3. Heapster: https://github.com/kubernetes/heapster
-4. Children’s Guide: https://deis.com/blog/2016/kubernetes-illustrated-guide/ (a little outdated)
+4. Children’s Guide: https://deis.com/blog/2016/kubernetes-illustrated-guide/ (a little outdated but worth a read)
 
 AWS CLI
 1. Download: https://aws.amazon.com/cli/  
