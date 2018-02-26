@@ -1,5 +1,11 @@
 #!/bin/bash
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+thisDirectory="${BASH_SOURCE%/*}"
+
+kubectl apply -f $thisDirectory/influxdb/persistent-volume.yaml
+kubectl apply -f $thisDirectory/influxdb/persistent-volume-claim.yaml
+kubectl apply -f $thisDirectory/influxdb/influxdb.yaml
+#kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
