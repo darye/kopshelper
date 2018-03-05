@@ -1,0 +1,5 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+
+helm install stable/datadog -f $thisDirectory/values.yaml --name "datadog"

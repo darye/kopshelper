@@ -97,6 +97,13 @@ if [ $? -eq 1 ]; then
   helm install stable/nginx-ingress --name "nginx"
 fi
 
+# add datadog
+askYesNoQuestion "Do you want to add DataDog?"
+if [ $? -eq 1 ]; then
+  echo "Adding DataDog"
+  $thisDirectory/addons/datadog/add
+fi
+
 if [ "$USE_BASTION" == "true" ]; then
   # add bastion access
   askYesNoQuestion "Do you want to add bastion access to your current IP?"
