@@ -7,7 +7,7 @@
 # - AUTO_SCALER_MAX
 
 thisDirectory="${BASH_SOURCE%/*}"
-source $thisDirectory/../utility
+source $thisDirectory/../../utility
 
 if [ -e $AUTO_SCALER_MIN ] ||
   [ -e $AUTO_SCALER_MAX ] ||
@@ -23,5 +23,11 @@ EOF
   exit 1
 fi
 
-envsubst \$KUBE_CLUSTER_NAME,\$AUTO_SCALER_MIN,\$AUTO_SCALER_MAX,\$REGION < $thisDirectory/cluster-autoscaler.yml.tmpl > ${thisDirectory}/../output/cluster-autoscaler.yml
-kubectl apply -f ${thisDirectory}/../output/cluster-autoscaler.yml;
+echo "Adding a Cluster Auto-Scaler"
+
+autoscalerYaml=${thisDirectory}/../../output/cluster-autoscaler.yaml
+envsubst \$KUBE_CLUSTER_NAME,\$AUTO_SCALER_MIN,\$AUTO_SCALER_MAX,\$REGION < $thisDirectory/cluster-autoscaler.yaml.tmpl > $autoscalerYaml
+
+kubectl apply -f $autoscalerYaml;
+
+echo "Done :-)"

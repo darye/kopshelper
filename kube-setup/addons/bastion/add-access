@@ -4,7 +4,7 @@
 # - KUBE_HOSTED_ZONE
 
 thisDirectory="${BASH_SOURCE%/*}"
-source $thisDirectory/../utility
+source $thisDirectory/../../utility
 
 if [ -e $KUBE_HOSTED_ZONE ]; then
 cat <<-EOF
@@ -14,8 +14,11 @@ EOF
   exit 1
 fi
 
+
 isClusterUp
 if [ $? -eq 0 ]; then echo "Cluster isn't up yet, nothing to finalize"; exit 0; fi
+
+echo "Adding bastion access"
 
 # add permissions to allow the person to login from their current IP into bastion
 ip=$(curl -s http://whatismyip.akamai.com/)
@@ -29,4 +32,5 @@ aws ec2 authorize-security-group-ingress --group-id "${groupId}" --protocol tcp 
 bastionIp=$(aws ec2 describe-instances --filter Name=network-interface.group-name,Values=bastion.kube-cluster.${KUBE_HOSTED_ZONE} | jq .Reservations[0].Instances[0].PublicIpAddress | sed s/\"//g)
 privateKeyFileName=$(echo $SSH_PUBLIC_KEY_FILE | sed -e 's/\.pub//g')
 
-echo -e "You can now SSH into your bastion node by using this command: \nssh -A -i ${privateKeyFileName} admin@${bastionIp}"
+echo -e "You can now SSH into your bastion node by using this command: \n\nssh -A -i ${privateKeyFileName} admin@${bastionIp}"
+echo "Done :-)"

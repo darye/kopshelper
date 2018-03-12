@@ -1,5 +1,24 @@
 #!/bin/bash
 
-thisDirectory="${BASH_SOURCE%/*}"
+# requires
+# - DATADOG_API_KEY
 
-helm install stable/datadog -f $thisDirectory/values.yaml --name "datadog"
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../utility
+
+if [ -e $DATADOG_API_KEY ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence DATADOG_API_KEY)
+EOF
+  exit 1
+fi
+
+echo "Adding DataDog"
+
+valuesYaml=${thisDirectory}/../../output/datadog-values.yaml;
+envsubst \$DATADOG_API_KEY < $thisDirectory/values.yaml.tmpl > $valuesYaml
+
+helm install stable/datadog -f $valuesYaml --name "datadog"
+
+echo "Done :-)"
