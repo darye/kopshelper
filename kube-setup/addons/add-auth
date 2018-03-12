@@ -1,0 +1,6 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+
+kubectl apply -f $thisDirectory/authorization/cluster-roles/pod-reader.yaml
+kubectl apply -f $thisDirectory/authorization/cluster-role-bindings/read-pods.yaml
