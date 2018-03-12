@@ -71,7 +71,7 @@ echo ""
 askYesNoQuestion "Do you want to add the Dashboard?"
 if [ $? -eq 1 ]; then
   echo "Adding Dashboard"
-  helm install stable/kubernetes-dashboard --name "dashboard"
+  kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
   echo "Done :-)"
 fi
 
