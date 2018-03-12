@@ -61,11 +61,7 @@ if [ $? -eq 1 ]; then
   $thisDirectory/manage-cluster/create
 fi
 
-echo ""
-echo "Installing Tiller..."
-helm repo update
-helm init
-echo ""
+$thisDirectory/addons/helm/add
 
 # add dashboard
 askYesNoQuestion "Do you want to add the Dashboard?"
@@ -101,7 +97,7 @@ if [ "$USE_BASTION" == "true" ]; then
   # add bastion access
   askYesNoQuestion "Do you want to add bastion access to your current IP?"
   if [ $? -eq 1 ]; then
-    $thisDirectory/addons/add-bastion-access
+    $thisDirectory/addons/bastion/add-access
   fi
 fi
 

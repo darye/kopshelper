@@ -4,11 +4,11 @@ thisDirectory="${BASH_SOURCE%/*}"
 
 echo "Adding InfluxDB, Heapster, and Grafana"
 
-kubectl apply -f $thisDirectory/influxdb/persistent-volume.yaml
-kubectl apply -f $thisDirectory/influxdb/persistent-volume-claim.yaml
+kubectl apply -f $thisDirectory/persistent-volume.yaml
+kubectl apply -f $thisDirectory/persistent-volume-claim.yaml
 # originally from https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
 # copied here to add persistent volume claim
-kubectl apply -f $thisDirectory/influxdb/influxdb.yaml
+kubectl apply -f $thisDirectory/influxdb.yaml
 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml

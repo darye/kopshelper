@@ -1,5 +1,6 @@
 #!/bin/bash
 
 echo "Adding Dashboard"
-helm install stable/kubernetes-dashboard --name "dashboard"
+# helm install stable/kubernetes-dashboard --name "dashboard"
+kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 echo "Done :-)"
