@@ -4,7 +4,7 @@
 # - DATADOG_API_KEY
 
 thisDirectory="${BASH_SOURCE%/*}"
-source $thisDirectory/../utility
+source $thisDirectory/../../utility
 
 if [ -e $DATADOG_API_KEY ]; then
 cat <<-EOF
@@ -16,9 +16,9 @@ fi
 
 echo "Adding DataDog"
 
-valuesYaml=${thisDirectory}/../../output/datadog-values.yaml;
-envsubst \$DATADOG_API_KEY < $thisDirectory/values.yaml.tmpl > $valuesYaml
+datadogAgentYaml=${thisDirectory}/../../output/datadog-agent.yaml;
+envsubst \$DATADOG_API_KEY < $thisDirectory/datadog-agent.yaml.tmpl > $datadogAgentYaml
 
-helm install stable/datadog -f $valuesYaml --name "datadog"
+kubectl apply -f $datadogAgentYaml
 
 echo "Done :-)"
