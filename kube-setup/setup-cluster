@@ -61,48 +61,43 @@ if [ $? -eq 1 ]; then
   $thisDirectory/manage-cluster/create
 fi
 
-echo ""
-echo "Installing Tiller..."
-helm repo update
-helm init
-echo ""
+$thisDirectory/addons/helm/add
 
 # add dashboard
 askYesNoQuestion "Do you want to add the Dashboard?"
 if [ $? -eq 1 ]; then
-  echo "Adding Dashboard"
-  helm install stable/kubernetes-dashboard --name "dashboard"
-  echo "Done :-)"
+  $thisDirectory/addons/dashboard/add
 fi
 
 # add heapster
-askYesNoQuestion "Do you want to add Heapster and Grafana?"
+askYesNoQuestion "Do you want to add InfluxDB, Heapster, and Grafana?"
 if [ $? -eq 1 ]; then
-  echo "Adding Heapster"
-  $thisDirectory/addons/add-heapster-grafana
-  echo "Done :-)"
+  $thisDirectory/addons/influxdb/add
 fi
 
 # add cluster autoscaler
 askYesNoQuestion "Do you want to add a Cluster Auto-Scaler?"
 if [ $? -eq 1 ]; then
-  echo "Adding a Cluster Auto-Scaler"
-  $thisDirectory/addons/add-autoscaler
+  $thisDirectory/addons/autoscaler/add
 fi
 
 # add nginx
 askYesNoQuestion "Do you want to add NGINX?"
 if [ $? -eq 1 ]; then
-  echo "Adding NGINX"
-  helm install stable/nginx-ingress --name "nginx"
+  $thisDirectory/addons/nginx/add
+fi
+
+# add datadog
+askYesNoQuestion "Do you want to add DataDog?"
+if [ $? -eq 1 ]; then
+  $thisDirectory/addons/datadog/add
 fi
 
 if [ "$USE_BASTION" == "true" ]; then
   # add bastion access
   askYesNoQuestion "Do you want to add bastion access to your current IP?"
   if [ $? -eq 1 ]; then
-    echo "Adding bastion access"
-    $thisDirectory/addons/add-bastion-access
+    $thisDirectory/addons/bastion/add-access
   fi
 fi
 

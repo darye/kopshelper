@@ -27,6 +27,8 @@ export NODE_VOLUME_SIZE=100
 export NODE_SIZE='m4.large'
 export MASTER_SIZE='t2.medium'
 
+export DATADOG_API_KEY=''
+
 export USE_BASTION="true" # true or false
 ```
 

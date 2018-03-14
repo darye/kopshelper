@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# requires
+# - DATADOG_API_KEY
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+
+if [ -e $DATADOG_API_KEY ]; then
+cat <<-EOF
+Missing required argument or ENV variable:
+  $(displayPresence DATADOG_API_KEY)
+EOF
+  exit 1
+fi
+
+echo "Adding DataDog"
+
+datadogAgentYaml=${thisDirectory}/../../output/datadog-agent.yaml;
+envsubst \$DATADOG_API_KEY < $thisDirectory/datadog-agent.yaml.tmpl > $datadogAgentYaml
+
+kubectl apply -f $datadogAgentYaml
+
+echo "Done :-)"
