@@ -38,8 +38,6 @@ EOF
   exit 1
 fi
 
-export AWS_DEFAULT_REGION=$AWS_REGION
-
 createBucketConfiguration=''
 if [[ ! $AWS_REGION == 'us-east-1' ]]; then
   createBucketConfiguration="--create-bucket-configuration LocationConstraint=${AWS_REGION}"
