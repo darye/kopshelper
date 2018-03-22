@@ -2,6 +2,10 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
+
 echo "Adding InfluxDB, Heapster"
 
 kubectl apply -f $thisDirectory/persistent-volume.yaml

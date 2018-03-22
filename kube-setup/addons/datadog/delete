@@ -2,10 +2,12 @@
 
 # requires
 # - DATADOG_API_KEY
+#!/bin/bash
 
 thisDirectory="${BASH_SOURCE%/*}"
 source $thisDirectory/../../utility
-source $thisDirectory/setup-vars
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
 
 if [ -e $DATADOG_API_KEY ]; then
 cat <<-EOF

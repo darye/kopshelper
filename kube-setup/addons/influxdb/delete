@@ -1,6 +1,9 @@
 #!/bin/bash
 
 thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
 
 echo "Deleting InfluxDB, Heapster, and Grafana"
 

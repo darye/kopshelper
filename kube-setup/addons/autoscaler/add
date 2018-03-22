@@ -8,7 +8,8 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 source $thisDirectory/../../utility
-source $thisDirectory/setup-vars
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
 
 if [ -e $AUTO_SCALER_MIN ] ||
   [ -e $AUTO_SCALER_MAX ] ||

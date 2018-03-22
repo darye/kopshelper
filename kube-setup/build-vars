@@ -8,4 +8,5 @@ export S3_BUCKET_NAME="kube-$SITE_NAME"
 export KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
 export AWS_DEFAULT_REGION=$AWS_REGION
 
+# ensure you're in the right context
 kubectl config use-context $KUBE_CLUSTER_NAME

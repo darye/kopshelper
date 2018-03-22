@@ -5,6 +5,8 @@ source $thisDirectory/../../utility
 source $thisDirectory/../../setup-vars
 source $thisDirectory/../../build-vars
 
-echo "Deleting Dashboard"
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+echo "Deleting NGINX"
+
+helm delete nginx --purge
+
 echo "Done :-)"
