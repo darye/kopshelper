@@ -36,11 +36,19 @@ awsHostedZoneCmd="aws route53 list-hosted-zones | jq '.HostedZones[] | select(.N
 hostedZone=$(eval $awsHostedZoneCmd)
 
 outputDir=$thisDirectory/../../output/
+<<<<<<< HEAD:kube-setup/addons/dns/add
 outputFile="${outputDir}route53-ns.json"
 
 mkdir -p $outputDir
 envsubst \$NS_RECORD_1,\$NS_RECORD_2,\$NS_RECORD_3,\$NS_RECORD_4,\$DOMAIN < $thisDirectory/route53-ns.json.tmpl > $outputFile
 
+=======
+outputFile="${outputDir}/route53-ns.json"
+
+mkdir -p $outputDir
+envsubst \$NS_RECORD_1,\$NS_RECORD_2,\$NS_RECORD_3,\$NS_RECORD_4,\$DOMAIN < $thisDirectory/route53-ns.json.tmpl > $outputFile
+
+>>>>>>> add/delete kube user, run scripts indenpendently:kube-setup/addons/dns/add
 awsAddRouteCmd="aws route53 change-resource-record-sets --hosted-zone-id ${hostedZone} --change-batch file://${outputFile}"
 eval $awsAddRouteCmd
 
