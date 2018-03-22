@@ -5,9 +5,9 @@
 # - DOMAIN
 
 thisDirectory="${BASH_SOURCE%/*}"
-source $thisDirectory/utility
-source $thisDirectory/setup-vars
-source $thisDirectory/build-vars
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
 
 if [ -e $KUBE_HOSTED_ZONE ] ||
    [ -e $ROOT_DOMAIN ] ||
@@ -21,9 +21,11 @@ EOF
   exit 1
 fi
 
-echo "Adding Route 53 entries"
+echo "Adding Route 53 entries: ${KUBE_HOSTED_ZONE}"
 
 dnsInfo=$(ID=$(uuidgen) && aws route53 create-hosted-zone --name $KUBE_HOSTED_ZONE --caller-reference $ID | jq .DelegationSet.NameServers)
+
+echo $dnsInfo
 
 export NS_RECORD_1=$(echo "${dnsInfo}" | jq .[0] | sed s/\"//g)
 export NS_RECORD_2=$(echo "${dnsInfo}" | jq .[1] | sed s/\"//g)
@@ -34,7 +36,7 @@ awsHostedZoneCmd="aws route53 list-hosted-zones | jq '.HostedZones[] | select(.N
 hostedZone=$(eval $awsHostedZoneCmd)
 
 outputDir=$thisDirectory/../../output/
-outputFile="${outputDir}/route53-ns.json"
+outputFile="${outputDir}route53-ns.json"
 
 mkdir -p $outputDir
 envsubst \$NS_RECORD_1,\$NS_RECORD_2,\$NS_RECORD_3,\$NS_RECORD_4,\$DOMAIN < $thisDirectory/route53-ns.json.tmpl > $outputFile
