@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # requires
-# - REGION
+# - AWS_REGION
 # - S3_BUCKET_NAME
 # - KUBE_CLUSTER_NAME
 # - KOPS_STATE_STORE
@@ -13,7 +13,7 @@
 thisDirectory="${BASH_SOURCE%/*}"
 source $thisDirectory/../utility
 
-if [ -e $REGION ] ||
+if [ -e $AWS_REGION ] ||
    [ -e $S3_BUCKET_NAME ] ||
    [ -e $KUBE_CLUSTER_NAME ] ||
    [ -e $KOPS_STATE_STORE ] ||
@@ -24,7 +24,7 @@ if [ -e $REGION ] ||
    [ -e $SSH_PUBLIC_KEY_FILE ]; then
 cat <<-EOF
 Missing required argument or ENV variable:
-  $(displayPresence REGION)
+  $(displayPresence AWS_REGION)
   $(displayPresence S3_BUCKET_NAME)
   $(displayPresence KUBE_CLUSTER_NAME)
   $(displayPresence KOPS_STATE_STORE)
@@ -39,14 +39,14 @@ EOF
 fi
 
 createBucketConfiguration=''
-if [[ ! $REGION == 'us-east-1' ]]; then
-  createBucketConfiguration="--create-bucket-configuration LocationConstraint=${REGION}"
+if [[ ! $AWS_REGION == 'us-east-1' ]]; then
+  createBucketConfiguration="--create-bucket-configuration LocationConstraint=${AWS_REGION}"
 fi
 
-aws s3api create-bucket --bucket $S3_BUCKET_NAME --region $REGION $createBucketConfiguration
+aws s3api create-bucket --bucket $S3_BUCKET_NAME --region $AWS_REGION $createBucketConfiguration
 aws s3api put-bucket-versioning --bucket $S3_BUCKET_NAME  --versioning-configuration Status=Enabled
 
-zones=$(aws ec2 describe-availability-zones --region ${REGION})
+zones=$(aws ec2 describe-availability-zones --region ${AWS_REGION})
 masterZone=$(echo "${zones}" | jq .AvailabilityZones[0].ZoneName | sed s/\"//g)
 allZones=$(echo "${zones}" | jq .AvailabilityZones[].ZoneName | sed s/\"//g | tr '\n' ',' | sed 's/.$//')
 

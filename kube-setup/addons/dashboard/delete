@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Deleting Dashboard"
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+echo "Done :-)"

@@ -5,6 +5,7 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 source $thisDirectory/../../utility
+source $thisDirectory/setup-vars
 
 if [ -e $KUBE_HOSTED_ZONE ]; then
 cat <<-EOF

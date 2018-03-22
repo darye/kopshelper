@@ -7,7 +7,7 @@
 # requires
 # - AWS_ACCESS_KEY_ID
 # - AWS_SECRET_ACCESS_KEY
-# - AWS_DEFAULT_REGION
+# - AWS_REGION
 # - DOMAIN
 # - NODE_COUNT
 thisDirectory="${BASH_SOURCE%/*}"
@@ -17,7 +17,7 @@ source $thisDirectory/utility
 
 if [ -e $AWS_ACCESS_KEY_ID ] ||
    [ -e $AWS_SECRET_ACCESS_KEY ] ||
-   [ -e $AWS_DEFAULT_REGION ] ||
+   [ -e $AWS_REGION ] ||
    [ -e $DOMAIN ] ||
    [ -e $NODE_COUNT ] ||
    [ -e $NODE_SIZE ] ||
@@ -28,7 +28,7 @@ cat <<-EOF
 Missing required argument or ENV variable:
   $(displayPresence AWS_ACCESS_KEY_ID)
   $(displayPresence AWS_SECRET_ACCESS_KEY)
-  $(displayPresence AWS_DEFAULT_REGION)
+  $(displayPresence AWS_REGION)
   $(displayPresence DOMAIN)
   $(displayPresence NODE_COUNT)
   $(displayPresence NODE_SIZE)
@@ -39,19 +39,13 @@ EOF
   exit 1
 fi
 
-export REGION=$AWS_DEFAULT_REGION
-# chop off the TLD
-export SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
-export KUBE_HOSTED_ZONE="$DOMAIN"
-export KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
-export S3_BUCKET_NAME="kube-$SITE_NAME"
-export KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+source $thisDirectory/build-vars
 
 # add Route 53 entries
 askYesNoQuestion "Do you want to add an entry into Route53 for ${KUBE_HOSTED_ZONE}?"
 if [ $? -eq 1 ]; then
   echo "Adding DNS"
-  $thisDirectory/add-dns
+  $thisDirectory/addons/dns/add
 fi
 
 # create cluster

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# chop off the TLD
+export SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
+export KUBE_HOSTED_ZONE="$DOMAIN"
+export KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
+export S3_BUCKET_NAME="kube-$SITE_NAME"
+export KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"

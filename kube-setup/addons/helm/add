@@ -5,5 +5,5 @@ thisDirectory="${BASH_SOURCE%/*}"
 echo ""
 echo "Installing Tiller..."
 helm repo update
-helm init --service-account tiller --upgrade
+helm init --upgrade
 echo ""

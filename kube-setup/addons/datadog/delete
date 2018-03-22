@@ -15,11 +15,11 @@ EOF
   exit 1
 fi
 
-echo "Adding DataDog"
+echo "Deleting DataDog"
 
 datadogAgentYaml=${thisDirectory}/../../output/datadog-agent.yaml;
 envsubst \$DATADOG_API_KEY < $thisDirectory/datadog-agent.yaml.tmpl > $datadogAgentYaml
 
-kubectl apply -f $datadogAgentYaml
+kubectl delete -f $datadogAgentYaml
 
 echo "Done :-)"

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+
+echo "Deleting InfluxDB, Heapster, and Grafana"
+
+kubectl delete -f $thisDirectory/persistent-volume.yaml
+kubectl delete -f $thisDirectory/persistent-volume-claim.yaml
+kubectl delete -f $thisDirectory/influxdb.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
+
+echo "Done :-)"
