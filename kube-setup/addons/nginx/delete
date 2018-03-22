@@ -5,8 +5,8 @@ source $thisDirectory/../../utility
 source $thisDirectory/../../setup-vars
 source $thisDirectory/../../build-vars
 
-echo "Adding NGINX"
+echo "Deleting NGINX"
 
-helm install stable/nginx-ingress --name "nginx"
+helm delete nginx --purge
 
 echo "Done :-)"

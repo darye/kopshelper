@@ -1,9 +1,12 @@
 #!/bin/bash
 
 thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
 
 echo ""
 echo "Installing Tiller..."
 helm repo update
-helm init --service-account tiller --upgrade
+helm init --upgrade
 echo ""

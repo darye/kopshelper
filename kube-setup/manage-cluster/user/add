@@ -1,0 +1,63 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
+
+outputDir=${thisDirectory}/../../output/
+
+# what's the user name
+read -r -d '' question <<-EOF
+Enter the new username:
+EOF
+
+read -p "$question" username
+
+awskey=$(aws s3api list-objects --bucket ${S3_BUCKET_NAME} --query "Contents[?contains(Key, '/pki/private/ca/')]" --output json | jq '.[0] | .Key' | sed s/\"//g)
+awscert=$(aws s3api list-objects --bucket ${S3_BUCKET_NAME} --query "Contents[?contains(Key, '/pki/issued/ca/')]" --output json | jq '.[0] | .Key' | sed s/\"//g)
+
+export USERNAME=$username
+userOutputDir="${outputDir}${USERNAME}/"
+
+mkdir -p $userOutputDir
+
+export CLUSTER_CRT="${KUBE_CLUSTER_NAME}.crt"
+CLUSTER_KEY="${KUBE_CLUSTER_NAME}.key"
+
+aws s3 cp "${KOPS_STATE_STORE}/${awskey}" "${outputDir}${CLUSTER_KEY}"
+aws s3 cp "${KOPS_STATE_STORE}/${awscert}" "${userOutputDir}${CLUSTER_CRT}"
+
+export USER_KEY_FILE="user_${USERNAME}.key"
+export USER_CRT_FILE="user_${USERNAME}.crt"
+USER_SRL_FILE="user_${USERNAME}.srl"
+USER_CSR_FILE="user_${USERNAME}.csr"
+
+openssl genrsa -out "${userOutputDir}${USER_KEY_FILE}" 4096
+openssl req -new \
+  -key "${userOutputDir}${USER_KEY_FILE}" \
+  -out "${outputDir}${USER_CSR_FILE}" \
+  -subj "/CN=${USERNAME}/O=developer"
+openssl x509 -req \
+  -in "${outputDir}${USER_CSR_FILE}" \
+  -CA "${userOutputDir}${CLUSTER_CRT}" \
+  -CAkey "${outputDir}${CLUSTER_KEY}" \
+  -CAserial "${outputDir}${USER_SRL_FILE}" \
+  -CAcreateserial \
+  -out "${userOutputDir}${USER_CRT_FILE}"
+# -days 365
+
+bindingName="${USERNAME}-cluster-admin-binding"
+
+kubectl create clusterrolebinding $bindingName --clusterrole=cluster-admin --user=$USERNAME
+
+outputFile="${userOutputDir}user_${USERNAME}.sh"
+
+envsubst \$CLUSTER_CRT,\$USERNAME,\$USER_KEY_FILE,\$USER_CRT_FILE,\$KUBE_CLUSTER_NAME < $thisDirectory/add.sh.tmpl > $outputFile
+
+zipFilename="${outputDir}${USERNAME}.zip"
+
+zip -r $zipFilename $userOutputDir
+
+echo "Created Zip file: ${zipFilename}"
+echo "Done :)"

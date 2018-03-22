@@ -1,0 +1,10 @@
+#!/bin/bash
+
+read -r -d '' question <<-EOF
+Enter the username you want to remove:
+EOF
+
+read -p "$question" username
+
+bindingName="${username}-cluster-admin-binding"
+kubectl delete ClusterRoleBinding $bindingName

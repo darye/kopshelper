@@ -25,11 +25,11 @@ EOF
   exit 1
 fi
 
-echo "Adding a Cluster Auto-Scaler"
+echo "Deleting Cluster Auto-Scaler"
 
 autoscalerYaml=${thisDirectory}/../../output/cluster-autoscaler.yaml
 envsubst \$KUBE_CLUSTER_NAME,\$AUTO_SCALER_MIN,\$AUTO_SCALER_MAX,\$AWS_REGION < $thisDirectory/cluster-autoscaler.yaml.tmpl > $autoscalerYaml
 
-kubectl apply -f $autoscalerYaml;
+kubectl delete -f $autoscalerYaml;
 
 echo "Done :-)"

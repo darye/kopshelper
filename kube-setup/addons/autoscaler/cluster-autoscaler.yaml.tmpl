@@ -140,7 +140,7 @@ spec:
             - --expander=least-waste
           env:
             - name: AWS_REGION
-              value: ${REGION}
+              value: ${AWS_REGION}
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt
