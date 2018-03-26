@@ -47,3 +47,5 @@ eval $awsAddRouteCmd
 echo "OK, added route53 mods..."
 echo "Checking DNS Resolution"
 echo "NOTE: you may need to edit your DNS records to ensure this is setup properly, especially if you're not using Route53 for your main domain"
+
+$thisDirectory/resolve
