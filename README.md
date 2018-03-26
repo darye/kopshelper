@@ -2,13 +2,20 @@
 
 ## Local Requirements
 
+Get latest versions of all below:
+
 - kops
 - kubectl
 - aws
 - jq
 - gettext
 
-## Seting up your cluster
+## AWS
+
+- Create your AWS Account
+- Setup AWS API Keys with permissions to write to IAM, S3, EC2, Route53
+
+## Setting up your cluster
 
 1. Clone this repo
 2. Create a file, `kube-setup/setup-vars`, following the template:

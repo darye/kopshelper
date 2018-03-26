@@ -47,6 +47,8 @@ if [ $? -eq 1 ]; then
   $thisDirectory/addons/dns/add
 fi
 
+$thisDirectory/addons/dns/resolve
+
 # create cluster
 askYesNoQuestion "Do you want to create the cluster for ${KUBE_HOSTED_ZONE}?"
 if [ $? -eq 1 ]; then

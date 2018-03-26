@@ -1,0 +1,13 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
+
+while [ -z $(dig "${DOMAIN}" | grep "${NS_RECORD_1}") ]; do
+    printf "."
+    sleep 5
+done
+
+echo -e "\nDNS Resolved!"
