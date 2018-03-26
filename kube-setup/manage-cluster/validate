@@ -4,7 +4,10 @@
 # - NODE_COUNT
 
 thisDirectory="${BASH_SOURCE%/*}"
+
 source $thisDirectory/../utility
+source $thisDirectory/../setup-vars
+source $thisDirectory/../build-vars
 
 if [ -e $NODE_COUNT ]; then
 cat <<-EOF

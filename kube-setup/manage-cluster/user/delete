@@ -1,5 +1,10 @@
 #!/bin/bash
 
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
+
 read -r -d '' question <<-EOF
 Enter the username you want to remove:
 EOF
