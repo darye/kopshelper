@@ -2,14 +2,9 @@
 
 thisDirectory="${BASH_SOURCE%/*}"
 
-source $thisDirectory/../setup-vars
 source $thisDirectory/../utility
-
-SITE_NAME=$(echo $DOMAIN | sed -e 's/\.\w*$//g')
-KUBE_HOSTED_ZONE="$DOMAIN"
-KUBE_CLUSTER_NAME="kube-cluster.$KUBE_HOSTED_ZONE"
-S3_BUCKET_NAME="kube-$SITE_NAME"
-KOPS_STATE_STORE="s3://$S3_BUCKET_NAME"
+source $thisDirectory/../setup-vars
+source $thisDirectory/../build-vars
 
 kops update cluster --state=$KOPS_STATE_STORE --name=$KUBE_CLUSTER_NAME
 

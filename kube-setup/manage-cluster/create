@@ -11,7 +11,10 @@
 # - SSH_PUBLIC_KEY_FILE
 
 thisDirectory="${BASH_SOURCE%/*}"
+
 source $thisDirectory/../utility
+source $thisDirectory/../setup-vars
+source $thisDirectory/../build-vars
 
 if [ -e $AWS_REGION ] ||
    [ -e $S3_BUCKET_NAME ] ||

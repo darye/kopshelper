@@ -14,6 +14,7 @@ thisDirectory="${BASH_SOURCE%/*}"
 
 source $thisDirectory/setup-vars
 source $thisDirectory/utility
+source $thisDirectory/build-vars
 
 if [ -e $AWS_ACCESS_KEY_ID ] ||
    [ -e $AWS_SECRET_ACCESS_KEY ] ||
@@ -39,8 +40,6 @@ EOF
   exit 1
 fi
 
-source $thisDirectory/build-vars
-
 # add Route 53 entries
 askYesNoQuestion "Do you want to add an entry into Route53 for ${KUBE_HOSTED_ZONE}?"
 if [ $? -eq 1 ]; then
@@ -55,7 +54,11 @@ if [ $? -eq 1 ]; then
   $thisDirectory/manage-cluster/create
 fi
 
-$thisDirectory/addons/helm/add
+# add helm
+askYesNoQuestion "Do you want to add Helm? - Some packages require helm install"
+if [ $? -eq 1 ]; then
+  $thisDirectory/addons/helm/add
+fi
 
 # add dashboard
 askYesNoQuestion "Do you want to add the Dashboard?"
