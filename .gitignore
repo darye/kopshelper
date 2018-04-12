@@ -1,4 +1,5 @@
 setup-vars
 *.tgz
 kube-setup/output/*
+kube-setup/setup-vars-archive/*
 example-commands
