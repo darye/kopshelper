@@ -59,5 +59,11 @@ zipFilename="${USERNAME}.zip"
 
 cd $outputDir && zip -r $zipFilename $USERNAME
 
+# delete temp files
+rm $USER_SRL_FILE
+rm $USER_CSR_FILE
+rm $CLUSTER_KEY
+rm -rf $USERNAME
+
 echo "Created Zip file: ${zipFilename}"
 echo "Done :)"
