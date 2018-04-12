@@ -6,6 +6,7 @@ kubectl config set-cluster \
 kubectl config set-cluster \
   ${KUBE_CLUSTER_NAME} \
   --certificate-authority=${CLUSTER_CRT}
+  --server=https://api.${KUBE_CLUSTER_NAME}
 
 kubectl config set-credentials \
   ${USERNAME} \
