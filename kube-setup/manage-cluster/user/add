@@ -55,6 +55,8 @@ outputFile="${userOutputDir}user_${USERNAME}.sh"
 
 envsubst \$CLUSTER_CRT,\$USERNAME,\$USER_KEY_FILE,\$USER_CRT_FILE,\$KUBE_CLUSTER_NAME < $thisDirectory/add.sh.tmpl > $outputFile
 
+chmod +x $outputFile
+
 zipFilename="${USERNAME}.zip"
 
 cd $outputDir && zip -r $zipFilename $USERNAME
