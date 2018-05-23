@@ -9,6 +9,7 @@ Get latest versions of all below:
 - aws
 - jq
 - gettext
+- helm
 
 ## AWS
 
