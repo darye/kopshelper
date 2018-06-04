@@ -12,8 +12,10 @@ Get latest versions of all below:
 - helm
 
 If running on macOS and using homebrew, to run gettext and specifically envsubst, you may need to run the following:
+```
 brew install gettext
 brew link --force gettext
+```
 
 ## AWS
 
