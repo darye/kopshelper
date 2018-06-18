@@ -1,0 +1,8 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../utility
+source $thisDirectory/../../setup-vars
+source $thisDirectory/../../build-vars
+
+kubectl get clusterrolebinding | grep -e '-cluster-admin-binding'
