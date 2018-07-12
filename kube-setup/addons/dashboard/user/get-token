@@ -1,0 +1,10 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../../utility
+source $thisDirectory/../../../setup-vars
+source $thisDirectory/../../../build-vars
+
+username=$1
+
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep ${username}-dashboard | awk '{print $1}')

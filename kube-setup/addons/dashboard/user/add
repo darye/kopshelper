@@ -1,0 +1,24 @@
+#!/bin/bash
+
+thisDirectory="${BASH_SOURCE%/*}"
+source $thisDirectory/../../../utility
+source $thisDirectory/../../../setup-vars
+source $thisDirectory/../../../build-vars
+
+outputDir=${thisDirectory}/../../../output/
+
+username=$1
+
+export USERNAME=$username
+echo $USERNAME
+
+addUserOutputFile="${outputDir}add-service-account-${USERNAME}.yaml"
+envsubst \$USERNAME < $thisDirectory/add-service-account.yaml.tmpl > $addUserOutputFile
+
+addUserRoleBindingOutputFile="${outputDir}add-cluster-rolebinding-${USERNAME}.yaml.tmpl"
+envsubst \$USERNAME < $thisDirectory/add-cluster-rolebinding.yaml.tmpl > $addUserRoleBindingOutputFile
+
+kubectl apply -f $addUserOutputFile
+kubectl apply -f $addUserRoleBindingOutputFile
+
+echo "Done :)"
