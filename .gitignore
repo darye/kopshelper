@@ -3,3 +3,5 @@ setup-vars
 kube-setup/output/*
 kube-setup/setup-vars-archive/*
 example-commands
+output
+.DS_Store
