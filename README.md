@@ -77,8 +77,3 @@ Helm
 Grafana
 1. Website: https://grafana.com
 
-## Contributors
-
-- Darye Henry
-- Preston Sego
-
