@@ -44,6 +44,10 @@ export MASTER_SIZE='t2.medium'
 export DATADOG_API_KEY=''
 
 export USE_BASTION="true" # true or false
+
+# used for deploying to an existing vpc
+export VPC_ID=''
+export NETWORK_CIDR=''
 ```
 
 3. Run ./kube-setup/setup-cluster

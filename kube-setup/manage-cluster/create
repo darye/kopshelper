@@ -67,11 +67,26 @@ createCommand="kops create cluster \
     --ssh-public-key $SSH_PUBLIC_KEY_FILE \
     --bastion=\"${USE_BASTION}\" "
 
+if [ ! -e $VPC_ID ] && [ ! -e $NETWORK_CIDR ]; then
+  createCommand="$createCommand \
+    --vpc $VPC_ID \
+    --network-cidr $NETWORK_CIDR"
+fi
+
 confirmClusterCommand="kops update cluster ${KUBE_CLUSTER_NAME} --yes"
 
 # create cluster for real
 eval $createCommand
 echo -e "\n\n"
+
+read -r -d '' editSpecQuestionText <<-EOF
+  Would you like to edit the cluster's spec before launching?
+EOF
+
+askYesNoQuestion "${editSpecQuestionText}"
+if [ $? -eq 1 ]; then
+  kops edit cluster $KUBE_CLUSTER_NAME
+fi
 
 read -r -d '' questionText <<-EOF
 !!! WARNING !!!
