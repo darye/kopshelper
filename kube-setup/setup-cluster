@@ -66,12 +66,6 @@ if [ $? -eq 1 ]; then
   $thisDirectory/addons/dashboard/add
 fi
 
-# add heapster
-askYesNoQuestion "Do you want to add InfluxDB, Heapster, and Grafana?"
-if [ $? -eq 1 ]; then
-  $thisDirectory/addons/influxdb/add
-fi
-
 # add cluster autoscaler
 askYesNoQuestion "Do you want to add a Cluster Auto-Scaler?"
 if [ $? -eq 1 ]; then
