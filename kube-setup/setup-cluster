@@ -54,12 +54,6 @@ if [ $? -eq 1 ]; then
   $thisDirectory/manage-cluster/create
 fi
 
-# add helm
-askYesNoQuestion "Do you want to add Helm? - Some packages require helm install"
-if [ $? -eq 1 ]; then
-  $thisDirectory/addons/helm/add
-fi
-
 # add dashboard
 askYesNoQuestion "Do you want to add the Dashboard?"
 if [ $? -eq 1 ]; then

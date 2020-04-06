@@ -7,6 +7,6 @@ source $thisDirectory/../../build-vars
 
 echo "Adding NGINX"
 
-helm install stable/nginx-ingress --name "nginx"
+helm install nginx stable/nginx-ingress 
 
 echo "Done :-)"
