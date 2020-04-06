@@ -6,5 +6,5 @@ source $thisDirectory/../../setup-vars
 source $thisDirectory/../../build-vars
 
 echo "Deleting Dashboard"
-kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+kubectl delete -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-rc7/aio/deploy/recommended.yaml
 echo "Done :-)"
