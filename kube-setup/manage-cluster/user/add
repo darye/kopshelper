@@ -45,7 +45,7 @@ openssl x509 -req \
   -CAserial "${outputDir}${USER_SRL_FILE}" \
   -CAcreateserial \
   -out "${userOutputDir}${USER_CRT_FILE}"
-# -days 365
+  -days 365
 
 bindingName="${USERNAME}-cluster-admin-binding"
 
